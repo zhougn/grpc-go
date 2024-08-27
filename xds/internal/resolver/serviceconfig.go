@@ -23,7 +23,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/bits"
-	"math/rand"
+	"math/rand/v2"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -131,8 +131,10 @@ type configSelector struct {
 	httpFilterConfig []xdsresource.HTTPFilter
 }
 
-var errNoMatchedRouteFound = status.Errorf(codes.Unavailable, "no matched route was found")
-var errUnsupportedClientRouteAction = status.Errorf(codes.Unavailable, "matched route does not have a supported route action type")
+var (
+	errNoMatchedRouteFound          = status.Errorf(codes.Unavailable, "no matched route was found")
+	errUnsupportedClientRouteAction = status.Errorf(codes.Unavailable, "matched route does not have a supported route action type")
+)
 
 func (cs *configSelector) SelectConfig(rpcInfo iresolver.RPCInfo) (*iresolver.RPCConfig, error) {
 	if cs == nil {

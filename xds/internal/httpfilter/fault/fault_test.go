@@ -26,7 +26,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"math/rand"
+	"math/rand/v2"
 	"net"
 	"reflect"
 	"testing"
@@ -471,11 +471,11 @@ func (s) TestFaultInjection_Unary(t *testing.T) {
 
 	for tcNum, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer func() { randIntn = rand.Intn; newTimer = time.NewTimer }()
+			defer func() { randIntN = rand.IntN; newTimer = time.NewTimer }()
 			var intnCalls []int
 			var newTimerCalls []time.Duration
 			randOut := 0
-			randIntn = func(n int) int {
+			randIntN = func(n int) int {
 				intnCalls = append(intnCalls, n)
 				return randOut % n
 			}
@@ -580,7 +580,8 @@ func (s) TestFaultInjection_MaxActiveFaults(t *testing.T) {
 				Percentage:         &tpb.FractionalPercent{Numerator: 100, Denominator: tpb.FractionalPercent_HUNDRED},
 				FaultDelaySecifier: &cpb.FaultDelay_FixedDelay{FixedDelay: durationpb.New(time.Second)},
 			},
-		})},
+		}),
+	},
 		hcm.HttpFilters...)
 	hcmAny := testutils.MarshalAny(t, hcm)
 	resources.Listeners[0].ApiListener.ApiListener = hcmAny

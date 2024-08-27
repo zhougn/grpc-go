@@ -24,7 +24,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math/rand"
+	"math/rand/v2"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -42,12 +42,16 @@ import (
 	tpb "github.com/envoyproxy/go-control-plane/envoy/type/v3"
 )
 
-const headerAbortHTTPStatus = "x-envoy-fault-abort-request"
-const headerAbortGRPCStatus = "x-envoy-fault-abort-grpc-request"
-const headerAbortPercentage = "x-envoy-fault-abort-request-percentage"
+const (
+	headerAbortHTTPStatus = "x-envoy-fault-abort-request"
+	headerAbortGRPCStatus = "x-envoy-fault-abort-grpc-request"
+	headerAbortPercentage = "x-envoy-fault-abort-request-percentage"
+)
 
-const headerDelayPercentage = "x-envoy-fault-delay-request-percentage"
-const headerDelayDuration = "x-envoy-fault-delay-request"
+const (
+	headerDelayPercentage = "x-envoy-fault-delay-request-percentage"
+	headerDelayDuration   = "x-envoy-fault-delay-request"
+)
 
 var statusMap = map[int]codes.Code{
 	400: codes.Internal,
@@ -64,8 +68,7 @@ func init() {
 	httpfilter.Register(builder{})
 }
 
-type builder struct {
-}
+type builder struct{}
 
 type config struct {
 	httpfilter.FilterConfig
@@ -162,8 +165,10 @@ func (i *interceptor) NewStream(ctx context.Context, _ iresolver.RPCInfo, done f
 }
 
 // For overriding in tests
-var randIntn = rand.Intn
-var newTimer = time.NewTimer
+var (
+	randIntN = rand.IntN
+	newTimer = time.NewTimer
+)
 
 func injectDelay(ctx context.Context, delayCfg *cpb.FaultDelay) error {
 	numerator, denominator := splitPct(delayCfg.GetPercentage())
@@ -190,7 +195,7 @@ func injectDelay(ctx context.Context, delayCfg *cpb.FaultDelay) error {
 			}
 		}
 	}
-	if delay == 0 || randIntn(denominator) >= numerator {
+	if delay == 0 || randIntN(denominator) >= numerator {
 		return nil
 	}
 	t := newTimer(delay)
@@ -230,7 +235,7 @@ func injectAbort(ctx context.Context, abortCfg *fpb.FaultAbort) error {
 			}
 		}
 	}
-	if !okCode || randIntn(denominator) >= numerator {
+	if !okCode || randIntN(denominator) >= numerator {
 		return nil
 	}
 	if code == codes.OK {

@@ -23,7 +23,7 @@ package main
 import (
 	"context"
 	"log"
-	"math/rand"
+	"math/rand/v2"
 	"net"
 	"time"
 
@@ -33,9 +33,7 @@ import (
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
-var (
-	ports = []string{":10001", ":10002", ":10003"}
-)
+var ports = []string{":10001", ":10002", ":10003"}
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {

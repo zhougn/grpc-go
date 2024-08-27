@@ -23,7 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"math/rand"
+	"math/rand/v2"
 	"net"
 	"slices"
 	"testing"
@@ -539,7 +539,8 @@ func (s) TestRingHash_AggregateClusterFallBackFromRingHashToLogicalDnsAtStartupN
 		grpc.WithResolvers(xdsResolver),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(dialer.DialContext),
-		grpc.WithConnectParams(cp)}
+		grpc.WithConnectParams(cp),
+	}
 	conn, err := grpc.NewClient("xds:///test.server", dopts...)
 	if err != nil {
 		t.Fatalf("Failed to create client: %s", err)
@@ -1785,7 +1786,8 @@ func (s) TestRingHash_SwitchToLowerPriorityAndThenBack(t *testing.T) {
 			Backends: backendOptions(t, []string{otherBackend}),
 			Weight:   1,
 			Priority: 1,
-		}}})
+		}},
+	})
 	cluster := e2e.ClusterResourceWithOptions(e2e.ClusterOptions{
 		ClusterName: clusterName,
 		ServiceName: clusterName,

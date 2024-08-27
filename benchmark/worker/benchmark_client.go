@@ -22,7 +22,7 @@ import (
 	"context"
 	"flag"
 	"math"
-	"math/rand"
+	"math/rand/v2"
 	"runtime"
 	"sync"
 	"time"
@@ -303,7 +303,6 @@ func (bc *benchmarkClient) unaryLoop(conns []*grpc.ClientConn, rpcCountPerConn i
 						bc.poissonUnary(client, idx, reqSize, respSize, *poissonLambda)
 					})
 				}
-
 			}(idx)
 		}
 	}
